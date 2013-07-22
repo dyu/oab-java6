@@ -499,8 +499,10 @@ do
     COOKIES="oraclelicensejdk-${JAVA_VER}u${JAVA_UPD}-oth-JPR=accept-securebackup-cookie;gpw_e24=http://edelivery.oracle.com"
 
     ncecho " [x] Downloading ${JAVA_BIN} : ${DOWNLOAD_SIZE} "
-    wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O ${WORK_PATH}/pkg/${JAVA_BIN} >> "$log" 2>&1 &
-    pid=$!;progress_loop $pid
+    if [ "$JAVA_UPSTREAM" != "sun-java6"]; then
+      wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O ${WORK_PATH}/pkg/${JAVA_BIN} >> "$log" 2>&1 &
+      pid=$!;progress_loop $pid
+    fi
 
     ncecho " [x] Symlinking ${JAVA_BIN} "
     ln -s ${WORK_PATH}/pkg/${JAVA_BIN} ${WORK_PATH}/src/${JAVA_BIN} >> "$log" 2>&1 &
@@ -527,8 +529,10 @@ fi
 DOWNLOAD_SIZE=`grep ${JCE_POLICY} /tmp/oab-download-jce.html | cut -d'{' -f2 | cut -d',' -f2 | cut -d'"' -f4`
 
 ncecho " [x] Downloading ${JCE_POLICY} : ${DOWNLOAD_SIZE} "
-wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O ${WORK_PATH}/pkg/${JCE_POLICY} >> "$log" 2>&1 &
-pid=$!;progress_loop $pid
+if [ "$JAVA_UPSTREAM" != "sun-java6"]; then
+  wget --no-check-certificate --header="Cookie: ${COOKIES}" -c "${DOWNLOAD_URL}" -O ${WORK_PATH}/pkg/${JCE_POLICY} >> "$log" 2>&1 &
+  pid=$!;progress_loop $pid
+fi
 
 ncecho " [x] Symlinking ${JCE_POLICY} "
 ln -s ${WORK_PATH}/pkg/${JCE_POLICY} ${WORK_PATH}/src/${JCE_POLICY} >> "$log" 2>&1 &
